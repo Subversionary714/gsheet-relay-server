@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import requests
-
-# Modified to ensure deploy logs print correctly
+import sys  # ✅ Added to enable flushing stdout
 
 app = Flask(__name__)
 
@@ -19,10 +18,11 @@ def relay_add_lender():
 
         response = requests.post(REAL_API_URL, json=payload, headers=headers)
 
-        # 🔍 Add this debug log to surface the response
+        # ✅ Debug logs
         print("🔁 Forwarded to secure-gsheet-api")
         print("Response code:", response.status_code)
         print("Response body:", response.text)
+        sys.stdout.flush()  # ✅ Force logs to appear in Render
 
         return jsonify({
             "status": "forwarded",
@@ -31,6 +31,8 @@ def relay_add_lender():
         }), response.status_code
 
     except Exception as e:
+        print("❌ Relay encountered an error:", str(e))
+        sys.stdout.flush()
         return jsonify({"error": str(e)}), 500
 
 @app.route("/", methods=["GET"])
