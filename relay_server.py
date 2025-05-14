@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import requests
 
+# Modified to ensure deploy logs print correctly
+
 app = Flask(__name__)
 
 REAL_API_URL = "https://secure-gsheet-api.onrender.com/add_lender"
