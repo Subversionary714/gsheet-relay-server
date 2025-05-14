@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
-import sys  # ✅ Added to enable flushing stdout
+import sys
+import json  # ✅ Required for json.dumps()
 
 app = Flask(__name__)
 
@@ -16,13 +17,17 @@ def relay_add_lender():
             "Authorization": f"Bearer {REAL_API_SECRET}"
         }
 
-        response = requests.post(REAL_API_URL, json=payload, headers=headers)
+        # ✅ Force sending as raw JSON string to Flask
+        response = requests.post(
+            REAL_API_URL,
+            data=json.dumps(payload),
+            headers=headers
+        )
 
-        # ✅ Debug logs
         print("🔁 Forwarded to secure-gsheet-api")
         print("Response code:", response.status_code)
         print("Response body:", response.text)
-        sys.stdout.flush()  # ✅ Force logs to appear in Render
+        sys.stdout.flush()
 
         return jsonify({
             "status": "forwarded",
